@@ -1,11 +1,14 @@
 import { MigratorService } from '../../andb-core/src/modules/migrator/migrator.service';
+import { MysqlMigrator } from '../../andb-core/src/modules/migrator/mysql/mysql.migrator';
 import { ITableDiff, ISchemaDiff, IObjectDiff } from '../../andb-core/src/common/interfaces/diff.interface';
 
 describe('MigratorService Unit', () => {
   let migrator: MigratorService;
+  let mysqlMigrator: MysqlMigrator;
 
   beforeEach(() => {
     migrator = new MigratorService();
+    mysqlMigrator = new MysqlMigrator();
   });
 
   describe('generateAlterSQL', () => {
@@ -23,7 +26,7 @@ describe('MigratorService Unit', () => {
         ],
       };
 
-      const sql = migrator.generateAlterSQL(diff);
+      const sql = migrator.generateAlterSQL(diff, mysqlMigrator);
       expect(sql).toContain('ALTER TABLE `users` ADD COLUMN `age` int(11) DEFAULT NULL;');
     });
 
@@ -40,7 +43,7 @@ describe('MigratorService Unit', () => {
         ],
       };
 
-      const sql = migrator.generateAlterSQL(diff);
+      const sql = migrator.generateAlterSQL(diff, mysqlMigrator);
       expect(sql).toContain('ALTER TABLE `users` DROP COLUMN `age`;');
     });
 
@@ -58,7 +61,7 @@ describe('MigratorService Unit', () => {
         ],
       };
 
-      const sql = migrator.generateAlterSQL(diff);
+      const sql = migrator.generateAlterSQL(diff, mysqlMigrator);
       expect(sql).toContain('ALTER TABLE `users` MODIFY COLUMN `status` varchar(50) NOT NULL;');
     });
 
@@ -76,7 +79,7 @@ describe('MigratorService Unit', () => {
         ],
       };
 
-      const sql = migrator.generateAlterSQL(diff);
+      const sql = migrator.generateAlterSQL(diff, mysqlMigrator);
       expect(sql).toContain('ALTER TABLE `users` ADD KEY `idx_status` (`status`);');
     });
 
@@ -93,7 +96,7 @@ describe('MigratorService Unit', () => {
         ],
       };
 
-      const sql = migrator.generateAlterSQL(diff);
+      const sql = migrator.generateAlterSQL(diff, mysqlMigrator);
       expect(sql).toContain('ALTER TABLE `users` DROP INDEX `idx_status`;');
     });
 
@@ -111,7 +114,7 @@ describe('MigratorService Unit', () => {
         ],
       };
 
-      const sql = migrator.generateAlterSQL(diff);
+      const sql = migrator.generateAlterSQL(diff, mysqlMigrator);
       expect(sql).toContain('ALTER TABLE `users` ADD PRIMARY KEY (`id`);');
     });
 
@@ -128,7 +131,7 @@ describe('MigratorService Unit', () => {
         ],
       };
 
-      const sql = migrator.generateAlterSQL(diff);
+      const sql = migrator.generateAlterSQL(diff, mysqlMigrator);
       expect(sql).toContain('ALTER TABLE `users` DROP PRIMARY KEY;');
     });
 
@@ -146,7 +149,7 @@ describe('MigratorService Unit', () => {
         ],
       };
 
-      const sql = migrator.generateAlterSQL(diff);
+      const sql = migrator.generateAlterSQL(diff, mysqlMigrator);
       expect(sql).toContain('ALTER TABLE `orders` ADD CONSTRAINT `fk_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);');
     });
 
@@ -163,7 +166,7 @@ describe('MigratorService Unit', () => {
         ],
       };
 
-      const sql = migrator.generateAlterSQL(diff);
+      const sql = migrator.generateAlterSQL(diff, mysqlMigrator);
       expect(sql).toContain('ALTER TABLE `orders` DROP FOREIGN KEY `fk_user_id`;');
     });
   });
@@ -176,7 +179,7 @@ describe('MigratorService Unit', () => {
         operation: 'CREATE',
         definition: 'CREATE VIEW `vw_users` AS SELECT * FROM users',
       };
-      const sql = migrator.generateObjectSQL(diff);
+      const sql = migrator.generateObjectSQL(diff, mysqlMigrator);
       expect(sql).toEqual(['CREATE VIEW `vw_users` AS SELECT * FROM users;']);
     });
 
@@ -186,7 +189,7 @@ describe('MigratorService Unit', () => {
         name: 'calc_totals',
         operation: 'DROP',
       };
-      const sql = migrator.generateObjectSQL(diff);
+      const sql = migrator.generateObjectSQL(diff, mysqlMigrator);
       expect(sql).toEqual(['DROP PROCEDURE IF EXISTS `calc_totals`;']);
     });
 
@@ -197,7 +200,7 @@ describe('MigratorService Unit', () => {
         operation: 'REPLACE',
         definition: 'CREATE TRIGGER `before_insert` BEFORE INSERT ON users',
       };
-      const sql = migrator.generateObjectSQL(diff);
+      const sql = migrator.generateObjectSQL(diff, mysqlMigrator);
       expect(sql).toEqual([
         'DROP TRIGGER IF EXISTS `before_insert`;',
         'CREATE TRIGGER `before_insert` BEFORE INSERT ON users;',
@@ -224,7 +227,7 @@ describe('MigratorService Unit', () => {
         ],
       };
 
-      const sql = migrator.generateSchemaSQL(diff);
+      const sql = migrator.generateSchemaSQL(diff, mysqlMigrator);
       // Ensure order: Drops -> Tables -> Create/Replace Objects
       expect(sql).toEqual([
         'DROP TABLE IF EXISTS `old_table`;',

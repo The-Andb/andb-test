@@ -6,7 +6,7 @@
 
 import { MysqlDriver } from '../../andb-core/src/modules/driver/mysql/mysql.driver';
 import { IIntrospectionService } from '../../andb-core/src/common/interfaces/driver.interface';
-import { dockerMysqlConfigs } from '../fixtures/database.fixtures';
+import { dockerMysqlConfigs } from '../e2e/fixtures/database.fixtures';
 
 describe('MysqlIntrospectionService', () => {
   let driver: MysqlDriver;

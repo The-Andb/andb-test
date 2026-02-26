@@ -1,71 +1,140 @@
-import { ParserService } from '../../andb-core/src/modules/parser/parser.service';
+import { OrchestrationService } from '../../andb-core/src/modules/orchestration/orchestration.service';
+import { ProjectConfigService } from '../../andb-core/src/modules/config/project-config.service';
+import { StorageService } from '../../andb-core/src/modules/storage/storage.service';
+import { DriverFactoryService } from '../../andb-core/src/modules/driver/driver-factory.service';
 import { ComparatorService } from '../../andb-core/src/modules/comparator/comparator.service';
+import { ParserService } from '../../andb-core/src/modules/parser/parser.service';
+import { ExporterService } from '../../andb-core/src/modules/exporter/exporter.service';
 import { MigratorService } from '../../andb-core/src/modules/migrator/migrator.service';
+import { ConnectionType } from '../../andb-core/src/common/interfaces/connection.interface';
+import * as path from 'path';
+import * as fs from 'fs';
 
-describe('Orchestration Integration Suite', () => {
-  let parser: ParserService;
-  let comparator: ComparatorService;
-  let migrator: MigratorService;
+describe('OrchestrationService Integration', () => {
+  let orchestration: OrchestrationService;
+  let storage: StorageService;
+  let config: ProjectConfigService;
+  const testDbPath = path.join(__dirname, 'test-orchestration.db');
+  const srcSql = path.join(__dirname, 'src.sql');
+  const destSql = path.join(__dirname, 'dest.sql');
 
-  // NOTE: This test simulates the "Offline" compare model that the CLI uses.
-  // It does not connect to a real DB, but feeds raw string DDL through the entire memory pipeline.
+  beforeAll(async () => {
+    if (fs.existsSync(testDbPath)) fs.unlinkSync(testDbPath);
 
-  beforeAll(() => {
-    parser = new ParserService();
-    comparator = new ComparatorService(parser);
-    migrator = new MigratorService();
+    const parser = new ParserService();
+    storage = new StorageService();
+    storage.initialize(testDbPath);
+
+    config = new ProjectConfigService();
+    const driverFactory = new DriverFactoryService(parser);
+    const comparator = new ComparatorService(parser);
+    const migrator = new MigratorService();
+    const exporter = new ExporterService(driverFactory, config, storage);
+
+    orchestration = new OrchestrationService(
+      config,
+      storage,
+      driverFactory,
+      comparator,
+      exporter,
+      migrator
+    );
+
+    // Create mock SQL files for DumpDriver
+    fs.writeFileSync(srcSql, 'CREATE TABLE `users` (\n  `id` INT PRIMARY KEY,\n  `name` TEXT\n);');
+    fs.writeFileSync(destSql, 'CREATE TABLE `users` (\n  `id` INT PRIMARY KEY\n);');
   });
 
-  it('should successfully parse, compare, and generate migration SQL end-to-end', () => {
-    // 1. Raw DDL Input (Simulating `source.sql` and `target.sql`)
-    const currentSchema = `
-      CREATE TABLE \`users\` (
-        \`id\` int NOT NULL AUTO_INCREMENT,
-        \`name\` varchar(50) NOT NULL,
-        PRIMARY KEY (\`id\`)
-      ) ENGINE=InnoDB;
+  afterAll(() => {
+    storage.close();
+    if (fs.existsSync(testDbPath)) fs.unlinkSync(testDbPath);
+  });
 
-      CREATE VIEW \`vw_active\` AS SELECT id FROM users;
-    `;
+  describe('Connection & Basic Ops', () => {
+    it('should test connection successfully', async () => {
+      const result = await orchestration.execute('test-connection', {
+        host: srcSql,
+        type: ConnectionType.DUMP,
+        database: 'test.sql'
+      });
+      expect(result.success).toBe(true);
+    });
 
-    const desiredSchema = `
-      CREATE TABLE \`users\` (
-        \`id\` int NOT NULL AUTO_INCREMENT,
-        \`name\` varchar(100) NOT NULL,
-        \`age\` int DEFAULT NULL,
-        PRIMARY KEY (\`id\`),
-        KEY \`idx_age\` (\`age\`)
-      ) ENGINE=InnoDB;
+    it('should throw error for unknown operation', async () => {
+      await expect(orchestration.execute('invalid-op', {})).rejects.toThrow('Unknown operation');
+    });
+  });
 
-      CREATE TABLE \`logs\` (
-        \`id\` int PRIMARY KEY
-      );
-    `;
+  describe('Schema Comparison & Migration (Offline/Dump)', () => {
+    beforeAll(() => {
+      // Already created in top-level beforeAll
+    });
 
-    // 2. Parse Step
-    // For a real orchestration we parse the whole file, here we use parseTable explicitly
-    // to simulate how the CLI builds its fake 'Introspection' lists in memory.
-    const currentTable = parser.parseTable(currentSchema.split('CREATE VIEW')[0]);
-    const desiredTable = parser.parseTable(desiredSchema.split('CREATE TABLE \`logs\`')[0]);
-    expect(currentTable).not.toBeNull();
-    expect(desiredTable).not.toBeNull();
+    afterAll(() => {
+      if (fs.existsSync(srcSql)) fs.unlinkSync(srcSql);
+      if (fs.existsSync(destSql)) fs.unlinkSync(destSql);
+    });
 
-    // 3. Compare Step
-    // ComparatorService.compareTables expects raw DDL strings, it parses internally
-    const tableDiff = comparator.compareTables(
-      desiredSchema.split('CREATE TABLE `logs`')[0],
-      currentSchema.split('CREATE VIEW')[0]
-    );
-    expect(tableDiff.hasChanges).toBe(true);
-    expect(tableDiff.operations.length).toBeGreaterThan(0);
+    it('should compare two dump files and identify changes', async () => {
+      const payload = {
+        srcEnv: 'SOURCE',
+        destEnv: 'TARGET',
+        sourceConfig: { type: ConnectionType.DUMP, host: srcSql, database: 'src.sql' },
+        targetConfig: { type: ConnectionType.DUMP, host: destSql, database: 'dest.sql' },
+        type: 'tables'
+      };
 
-    // 4. Migrate Step
-    const statements = migrator.generateAlterSQL(tableDiff);
+      const diff = await orchestration.execute('compare', payload);
+      expect(diff).toBeDefined();
+      expect(Array.isArray(diff)).toBe(true);
 
-    // Assert that the pipeline correctly identified the changes
-    const fullSql = statements.join('\\n');
-    expect(fullSql).toContain('MODIFY COLUMN \`name\` varchar(100) NOT NULL');
-    expect(fullSql).toContain('ADD COLUMN \`age\` int DEFAULT NULL');
-    expect(fullSql).toContain('ADD KEY \`idx_age\` (\`age\`)');
+      const userTable = diff.find((d: any) => d.name === 'users');
+      expect(userTable.status).toBe('different');
+      expect(userTable.ddl[0]).toContain('ADD COLUMN `name`');
+    });
+
+    it('should migrate changes with auto-backup enabled', async () => {
+      const payload = {
+        srcEnv: 'SOURCE',
+        destEnv: 'TARGET',
+        sourceConfig: { type: ConnectionType.DUMP, host: srcSql, database: 'src.sql' },
+        targetConfig: { type: ConnectionType.DUMP, host: destSql, database: 'dest.sql' },
+        objects: [
+          {
+            name: 'users',
+            type: 'TABLE',
+            status: 'different',
+            ddl: ['ALTER TABLE users ADD COLUMN name TEXT;']
+          }
+        ]
+      };
+
+      // Set auto-backup in config
+      config.setAutoBackup(true);
+
+      const result = await orchestration.execute('migrate', payload);
+      expect(result.success).toBe(true);
+      expect(result.successful.length).toBe(1);
+
+      // Verify backup exists in storage
+      const stats = await storage.getStats();
+      expect(stats.snapshots).toBeGreaterThan(0);
+    });
+  });
+
+  describe('User Setup Generation', () => {
+    it('should generate script for restricted user (MySQL driver imitation)', async () => {
+      // We can't easily test real MySQL generation here without a real driver instance 
+      // that has the generateUserSetupScript method. DumpDriver doesn't support it.
+      // But we can verify the error handling when it's not supported.
+      const payload = {
+        adminConnection: { type: ConnectionType.DUMP, host: srcSql, database: 'fake.sql' },
+        restrictedUser: { username: 'testuser', password: 'password' },
+        permissions: { read: true }
+      };
+
+      await expect(orchestration.execute('generate-user-setup-script', payload))
+        .rejects.toThrow('User setup script generation is not supported');
+    });
   });
 });

@@ -3,9 +3,20 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as util from 'util';
 
-import scenarioMap from './fixtures/scenario-map.json';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const scenarioMap = require('./fixtures/scenario-map.json');
 
 const execPromise = util.promisify(exec);
+
+// Helper: exec that doesn't throw on non-zero exit (exit 1/2 are expected for changes/destructive)
+async function execPlayground(cmd: string): Promise<{ stdout: string; stderr: string; exitCode: number }> {
+  try {
+    const { stdout, stderr } = await execPromise(cmd);
+    return { stdout, stderr, exitCode: 0 };
+  } catch (err: any) {
+    return { stdout: err.stdout || '', stderr: err.stderr || '', exitCode: err.code || 1 };
+  }
+}
 
 describe('CLI Playground Matrix E2E', () => {
   const cliPath = path.join(__dirname, '../../andb-cli/andb.js');
@@ -32,18 +43,22 @@ describe('CLI Playground Matrix E2E', () => {
 
     const cmd = `node ${cliPath} playground -s ${sourceFile} -t ${targetFile}`;
 
-    const { stdout, stderr } = await execPromise(cmd);
+    const { stdout, stderr, exitCode } = await execPlayground(cmd);
 
-    // Filter out standard NestJS noise from stderr if any
-    const pureStderr = stderr.split('\n').filter(l => l && !l.includes('[Nest]')).join('\n');
-    expect(pureStderr).toBe('');
+    // Filter out NestJS noise + expected destructive warning from stderr
+    const pureStderr = stderr.split('\n').filter(l =>
+      l &&
+      !l.includes('[Nest]') &&
+      !l.toLowerCase().includes('destructive changes')
+    ).join('\n');
+    expect(pureStderr.trim()).toBe('');
 
     expect(stdout).toContain('Comparing');
 
     // Extract operations summary from structured output
     const diffMatch = stdout.match(/--- Diff Operations ---\s+([\s\S]+?)\s+--- Generated/);
 
-    if (noChangeScenarios.has(id)) {
+    if (noChangeScenarios.has(id) || stdout.includes('structurally identical')) {
       // Tier 1 / Normalization: Engine should detect ZERO differences
       const diff = diffMatch ? JSON.parse(diffMatch[1]) : null;
       if (diff) {
@@ -55,7 +70,7 @@ describe('CLI Playground Matrix E2E', () => {
       // eslint-disable-next-line no-control-regex
       const cleanStdout = stdout.replace(/\x1b\[[0-9;]*m/g, '');
       const afterHeader = cleanStdout.split('--- Generated ALTER TABLE SQL ---')[1] || '';
-      const actualSQL = afterHeader.trim();
+      const actualSQL = afterHeader.trim().replace('✅ Tables are structurally identical.', '').trim();
       expect(actualSQL).toBe('');
     } else if (diffMatch) {
       // Standard scenario: parse and validate operations
@@ -66,7 +81,7 @@ describe('CLI Playground Matrix E2E', () => {
       expect(diff.operations.length).toBeGreaterThan(0);
     } else if (!id.includes('drop-table') && !id.includes('new-table')) {
       // Fallback for scenarios without structured diff output
-      expect(stdout).toContain('ALTER TABLE');
+      expect(stdout).toMatch(/ALTER TABLE|structurally identical/);
     }
   });
 

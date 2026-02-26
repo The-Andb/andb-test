@@ -5,7 +5,7 @@
  */
 
 import { MysqlDriver } from '../../andb-core/src/modules/driver/mysql/mysql.driver';
-import { dockerMysqlConfigs } from '../fixtures/database.fixtures';
+import { dockerMysqlConfigs } from '../e2e/fixtures/database.fixtures';
 
 describe('MysqlDriver Advanced Features', () => {
   let driver: MysqlDriver;

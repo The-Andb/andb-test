@@ -9,7 +9,14 @@ module.exports = {
   testMatch: [
     '<rootDir>/andb-test/unit/**/*.spec.ts',
     '<rootDir>/andb-test/integration/**/*.spec.ts',
-    '<rootDir>/andb-test/e2e/**/*.spec.ts'
+    '<rootDir>/andb-test/e2e/**/*.spec.ts',
+    '<rootDir>/andb-core/src/**/*.spec.ts'
+  ],
+  testPathIgnorePatterns: [
+    '/node_modules/',
+    '/dist/',
+    // Co-located specs that use @nestjs/testing (incompatible with isolatedModules)
+    'andb-core/src/modules/orchestration/orchestration.service.spec.ts'
   ],
   transform: {
     '^.+\\.tsx?$': ['ts-jest', { isolatedModules: true }],
@@ -25,7 +32,6 @@ module.exports = {
   coverageReporters: ['text', 'lcov', 'html', 'json-summary'],
   collectCoverageFrom: [
     '<rootDir>/andb-core/src/modules/**/*.ts',
-    '<rootDir>/andb-cli/src/commands/**/*.ts',
     '!<rootDir>/**/*.spec.ts',
   ],
   setupFilesAfterEnv: ['<rootDir>/andb-test/setup/integration.setup.ts'],

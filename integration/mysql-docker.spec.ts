@@ -16,7 +16,7 @@ import { MysqlDriver } from '../../andb-core/src/modules/driver/mysql/mysql.driv
 import { SshTunnel } from '../../andb-core/src/modules/driver/ssh-tunnel';
 import { IDatabaseConfig } from '../../andb-core/src/common/interfaces/driver.interface';
 import { ISshConfig } from '../../andb-core/src/common/interfaces/connection.interface';
-import { dockerMysqlConfigs, dockerSshConfig, dockerInternalHosts } from '../fixtures/database.fixtures';
+import { dockerMysqlConfigs, dockerSshConfig, dockerInternalHosts } from '../e2e/fixtures/database.fixtures';
 
 describe('MySQL Docker Integration Tests', () => {
   const devConfig: IDatabaseConfig = dockerMysqlConfigs.dev;
