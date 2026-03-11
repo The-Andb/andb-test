@@ -29,5 +29,10 @@
   "trigger-complex-matrix": "Modifying Trigger logic and timing",
   "unique-to-normal": "Downgrading UNIQUE KEY to normal KEY (DROP+ADD)",
   "version-comments": "MySQL version comments normalization — should produce NO changes",
-  "view-matrix": "Updating View query definitions"
+  "view-matrix": "Updating View query definitions",
+  "table-rename": "Hardened: Detection of RENAME TABLE old TO new",
+  "charset-collate-change": "Hardened: Multi-level CHARACTER SET and COLLATE management",
+  "constraint-rename": "Hardened: Renaming Index/FK without structural changes",
+  "advanced-types": "Hardened: JSON, GEOMETRY, and complex ENUM escaping",
+  "implicit-collation": "Hardened No-Change: Explicit collation matching default should be ignored"
 }

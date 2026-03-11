@@ -25,7 +25,7 @@ describe('ExporterService', () => {
 
     config.setConnection('DUMMY', { type: ConnectionType.DUMP, host: dummySql, database: 'dummy.sql' }, ConnectionType.DUMP);
 
-    exporter = new ExporterService(driverFactory, config, storage);
+    exporter = new ExporterService(driverFactory, config, parser, storage);
   });
 
   afterAll(() => {

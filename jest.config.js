@@ -15,7 +15,7 @@ module.exports = {
   testPathIgnorePatterns: [
     '/node_modules/',
     '/dist/',
-    // Co-located specs that use @nestjs/testing (incompatible with isolatedModules)
+    // Co-located specs that use @framework/testing (incompatible with isolatedModules)
     'andb-core/src/modules/orchestration/orchestration.service.spec.ts'
   ],
   transform: {

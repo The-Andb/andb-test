@@ -49,7 +49,7 @@ describe('StorageService', () => {
     const comps = await storage.getComparisons('DEV', 'PROD', 'mydb', 'TABLE') as any[];
     expect(comps.length).toBe(1);
     expect(comps[0].name).toBe('users');
-    expect(JSON.parse(comps[0].alter_statements)).toContain('ALTER TABLE users ADD COLUMN age INT');
+    expect(comps[0].alterStatements).toContain('ALTER TABLE users ADD COLUMN age INT');
 
     const latest = await storage.getLatestComparisons(5);
     expect(latest.length).toBeGreaterThan(0);

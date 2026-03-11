@@ -76,9 +76,12 @@ describe('MysqlDriver Advanced Features', () => {
 
       expect(script).toContain("CREATE USER IF NOT EXISTS 'readonly_user'@'%'");
       expect(script).toContain("IDENTIFIED BY 'secure123'");
-      expect(script).toContain('GRANT SELECT, SHOW VIEW');
-      expect(script).toContain('`test_db`.*');
-      expect(script).toContain('FLUSH PRIVILEGES');
+      expect(script).toContain("GRANT SELECT");
+      expect(script).toContain("SHOW VIEW");
+      expect(script).toContain("TRIGGER");
+      expect(script).toContain("EVENT");
+      expect(script).toContain("test_db");
+      expect(script).toContain("FLUSH PRIVILEGES");
 
       // Should NOT have write permissions
       expect(script).not.toContain('ALTER,');
@@ -145,7 +148,10 @@ describe('MysqlDriver Advanced Features', () => {
         },
       });
 
-      expect(script).toContain('GRANT SELECT, SHOW VIEW');
+      expect(script).toContain('GRANT SELECT');
+      expect(script).toContain('SHOW VIEW');
+      expect(script).toContain('TRIGGER');
+      expect(script).toContain('EVENT');
       expect(script).toContain('GRANT ALTER, CREATE, DROP');
       expect(script).toContain('GRANT CREATE VIEW');
       expect(script).toContain('GRANT ALTER ROUTINE, CREATE ROUTINE, EXECUTE');

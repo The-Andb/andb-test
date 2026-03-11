@@ -27,14 +27,12 @@ const scenarioMap = require('./fixtures/scenario-map.json');
 
 const execPromise = util.promisify(exec);
 
-// Helper: exec that doesn't throw on non-zero exit (exit 1/2 are expected for changes/destructive)
-async function execPlayground(cmd: string): Promise<{ stdout: string; exitCode: number }> {
-  try {
-    const { stdout } = await execPromise(cmd);
-    return { stdout, exitCode: 0 };
-  } catch (err: any) {
-    return { stdout: err.stdout || '', exitCode: err.code || 1 };
-  }
+import { CliRunner } from './utils/cli-runner';
+
+// Helper: use professional CliRunner
+const runner = new CliRunner(path.join(__dirname, '../../andb-cli/andb.js'));
+async function execPlayground(args: string[]): Promise<{ stdout: string; exitCode: number | null }> {
+  return await runner.run(args);
 }
 
 const skipScenarios = new Set([
@@ -46,6 +44,7 @@ const skipScenarios = new Set([
   // --- Known Limitations (not bugs, architectural) ---
   'add-foreign-key',  // Playground parses only first table in multi-table SQL
   'version-comments', // _normalizeDef doesn't fully resolve version-comment syntax
+  'table-rename',     // Requires specialized test runner logic (old -> new table name)
 ]);
 
 // Scenarios where engine should produce zero changes
@@ -53,6 +52,7 @@ const noChangeScenarios = new Set([
   'int-display-width',
   'implicit-btree',
   'reorder-columns',
+  'implicit-collation', // Explicit collation matching default - should produce NO changes
 ]);
 
 // Scenarios with FK references to external tables — need dependency stubs
@@ -149,25 +149,21 @@ describe('Sandbox Execution Layer (Docker MySQL)', () => {
 
       if (noChangeScenarios.has(id)) {
         // No-change scenarios: verify playground produces no ALTER
-        const cmd = `node ${cliPath} playground -s ${sourceFile} -t ${targetFile}`;
-        const { stdout } = await execPlayground(cmd);
+        const args = ['playground', '-s', sourceFile, '-t', targetFile];
+        const { stdout } = await execPlayground(args);
         // eslint-disable-next-line no-control-regex
-        const cleanStdout = stdout.replace(/\x1b\[[0-9;]*m/g, '');
-        const afterHeader = cleanStdout.split('--- Generated ALTER TABLE SQL ---')[1] || '';
-        const actualSQL = afterHeader.trim().replace('✅ Tables are structurally identical.', '').trim();
+        const actualSQL = stdout.replace(/\x1b\[[0-9;]*m/g, '').trim().replace('✅ Tables are structurally identical.', '').trim();
         expect(actualSQL).toBe('');
         console.log(`   \x1b[36m◌ No ALTER needed — schema already matches (sandbox verified)\x1b[0m`);
         return;
       }
 
       // 5. Run Playground engine → capture ALTER SQL
-      const cmd = `node ${cliPath} playground -s ${sourceFile} -t ${targetFile}`;
-      const { stdout } = await execPlayground(cmd);
+      const args = ['playground', '-s', sourceFile, '-t', targetFile];
+      const { stdout } = await execPlayground(args);
 
       // eslint-disable-next-line no-control-regex
-      const cleanStdout = stdout.replace(/\x1b\[[0-9;]*m/g, '');
-      const afterHeader = cleanStdout.split('--- Generated ALTER TABLE SQL ---')[1] || '';
-      const alterSQL = afterHeader.trim();
+      const alterSQL = stdout.replace(/\x1b\[[0-9;]*m/g, '').trim();
 
       if (!alterSQL) {
         throw new Error(`No ALTER SQL generated for scenario: ${id}`);

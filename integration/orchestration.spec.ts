@@ -1,4 +1,7 @@
 import { OrchestrationService } from '../../andb-core/src/modules/orchestration/orchestration.service';
+import { SecurityOrchestrator } from '../../andb-core/src/modules/orchestration/security-orchestrator.service';
+import { GitOrchestrator } from '../../andb-core/src/modules/orchestration/git-orchestrator.service';
+import { SchemaOrchestrator } from '../../andb-core/src/modules/orchestration/schema-orchestrator.service';
 import { ProjectConfigService } from '../../andb-core/src/modules/config/project-config.service';
 import { StorageService } from '../../andb-core/src/modules/storage/storage.service';
 import { DriverFactoryService } from '../../andb-core/src/modules/driver/driver-factory.service';
@@ -7,6 +10,7 @@ import { ParserService } from '../../andb-core/src/modules/parser/parser.service
 import { ExporterService } from '../../andb-core/src/modules/exporter/exporter.service';
 import { MigratorService } from '../../andb-core/src/modules/migrator/migrator.service';
 import { ConnectionType } from '../../andb-core/src/common/interfaces/connection.interface';
+import { featureConfig } from '../../andb-core/src/modules/config/feature.config';
 import * as path from 'path';
 import * as fs from 'fs';
 
@@ -27,22 +31,38 @@ describe('OrchestrationService Integration', () => {
 
     config = new ProjectConfigService();
     const driverFactory = new DriverFactoryService(parser);
-    const comparator = new ComparatorService(parser);
+    const comparator = new ComparatorService(parser, storage, config);
     const migrator = new MigratorService();
-    const exporter = new ExporterService(driverFactory, config, storage);
+    const exporter = new ExporterService(driverFactory, config, parser, storage);
 
-    orchestration = new OrchestrationService(
+    const mirrorService = {} as any;
+    const gitOrchestrator = new GitOrchestrator(mirrorService);
+    const securityOrchestrator = new SecurityOrchestrator(config, driverFactory);
+    const schemaOrchestrator = new SchemaOrchestrator(
       config,
       storage,
       driverFactory,
       comparator,
       exporter,
-      migrator
+      migrator,
+      gitOrchestrator
+    );
+
+    orchestration = new OrchestrationService(
+      config,
+      featureConfig,
+      securityOrchestrator,
+      gitOrchestrator,
+      schemaOrchestrator
     );
 
     // Create mock SQL files for DumpDriver
     fs.writeFileSync(srcSql, 'CREATE TABLE `users` (\n  `id` INT PRIMARY KEY,\n  `name` TEXT\n);');
     fs.writeFileSync(destSql, 'CREATE TABLE `users` (\n  `id` INT PRIMARY KEY\n);');
+
+    // Rule #1 parity: Populate storage for offline compare
+    await storage.saveDDL('SOURCE', 'src.sql', 'TABLES', 'users', 'CREATE TABLE `users` (\n  `id` INT PRIMARY KEY,\n  `name` TEXT\n);');
+    await storage.saveDDL('TARGET', 'dest.sql', 'TABLES', 'users', 'CREATE TABLE `users` (\n  `id` INT PRIMARY KEY\n);');
   });
 
   afterAll(() => {
@@ -85,12 +105,12 @@ describe('OrchestrationService Integration', () => {
       };
 
       const diff = await orchestration.execute('compare', payload);
-      expect(diff).toBeDefined();
       expect(Array.isArray(diff)).toBe(true);
 
       const userTable = diff.find((d: any) => d.name === 'users');
+      expect(userTable).toBeDefined();
       expect(userTable.status).toBe('different');
-      expect(userTable.ddl[0]).toContain('ADD COLUMN `name`');
+      expect(userTable.alterStatements.some((s: string) => s.includes('ADD COLUMN `name`'))).toBe(true);
     });
 
     it('should migrate changes with auto-backup enabled', async () => {

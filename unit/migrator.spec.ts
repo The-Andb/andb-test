@@ -27,7 +27,7 @@ describe('MigratorService Unit', () => {
       };
 
       const sql = migrator.generateAlterSQL(diff, mysqlMigrator);
-      expect(sql).toContain('ALTER TABLE `users` ADD COLUMN `age` int(11) DEFAULT NULL;');
+      expect(sql).toContain('ALTER TABLE `users`\n  ADD COLUMN `age` int(11) DEFAULT NULL;');
     });
 
     it('should generate DROP COLUMN statements', () => {
@@ -44,7 +44,7 @@ describe('MigratorService Unit', () => {
       };
 
       const sql = migrator.generateAlterSQL(diff, mysqlMigrator);
-      expect(sql).toContain('ALTER TABLE `users` DROP COLUMN `age`;');
+      expect(sql).toContain('ALTER TABLE `users`\n  DROP COLUMN `age`;');
     });
 
     it('should generate MODIFY COLUMN statements', () => {
@@ -62,7 +62,7 @@ describe('MigratorService Unit', () => {
       };
 
       const sql = migrator.generateAlterSQL(diff, mysqlMigrator);
-      expect(sql).toContain('ALTER TABLE `users` MODIFY COLUMN `status` varchar(50) NOT NULL;');
+      expect(sql).toContain('ALTER TABLE `users`\n  MODIFY COLUMN `status` varchar(50) NOT NULL;');
     });
 
     it('should generate ADD INDEX statements', () => {
@@ -80,7 +80,7 @@ describe('MigratorService Unit', () => {
       };
 
       const sql = migrator.generateAlterSQL(diff, mysqlMigrator);
-      expect(sql).toContain('ALTER TABLE `users` ADD KEY `idx_status` (`status`);');
+      expect(sql).toContain('ALTER TABLE `users`\n  ADD KEY `idx_status` (`status`);');
     });
 
     it('should generate DROP INDEX statements', () => {
@@ -97,7 +97,7 @@ describe('MigratorService Unit', () => {
       };
 
       const sql = migrator.generateAlterSQL(diff, mysqlMigrator);
-      expect(sql).toContain('ALTER TABLE `users` DROP INDEX `idx_status`;');
+      expect(sql).toContain('ALTER TABLE `users`\n  DROP INDEX `idx_status`;');
     });
 
     it('should support ADD PRIMARY KEY', () => {
@@ -115,7 +115,7 @@ describe('MigratorService Unit', () => {
       };
 
       const sql = migrator.generateAlterSQL(diff, mysqlMigrator);
-      expect(sql).toContain('ALTER TABLE `users` ADD PRIMARY KEY (`id`);');
+      expect(sql).toContain('ALTER TABLE `users`\n  ADD PRIMARY KEY (`id`);');
     });
 
     it('should support DROP PRIMARY KEY', () => {
@@ -132,7 +132,7 @@ describe('MigratorService Unit', () => {
       };
 
       const sql = migrator.generateAlterSQL(diff, mysqlMigrator);
-      expect(sql).toContain('ALTER TABLE `users` DROP PRIMARY KEY;');
+      expect(sql).toContain('ALTER TABLE `users`\n  DROP PRIMARY KEY;');
     });
 
     it('should support ADD FOREIGN KEY', () => {
@@ -150,7 +150,7 @@ describe('MigratorService Unit', () => {
       };
 
       const sql = migrator.generateAlterSQL(diff, mysqlMigrator);
-      expect(sql).toContain('ALTER TABLE `orders` ADD CONSTRAINT `fk_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);');
+      expect(sql).toContain('ALTER TABLE `orders`\n  ADD CONSTRAINT `fk_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);');
     });
 
     it('should support DROP FOREIGN KEY', () => {
@@ -167,7 +167,7 @@ describe('MigratorService Unit', () => {
       };
 
       const sql = migrator.generateAlterSQL(diff, mysqlMigrator);
-      expect(sql).toContain('ALTER TABLE `orders` DROP FOREIGN KEY `fk_user_id`;');
+      expect(sql).toContain('ALTER TABLE `orders`\n  DROP FOREIGN KEY `fk_user_id`;');
     });
   });
 
@@ -232,7 +232,7 @@ describe('MigratorService Unit', () => {
       expect(sql).toEqual([
         'DROP TABLE IF EXISTS `old_table`;',
         'DROP VIEW IF EXISTS `vw_1`;',
-        'ALTER TABLE `users` ADD COLUMN `age` int(11);',
+        'ALTER TABLE `users`\n  ADD COLUMN `age` int(11);',
         'CREATE PROCEDURE proc_1;',
         'DROP TRIGGER IF EXISTS `trg_1`;',
         'CREATE TRIGGER trg_1;',

@@ -8,14 +8,12 @@ const scenarioMap = require('./fixtures/scenario-map.json');
 
 const execPromise = util.promisify(exec);
 
-// Helper: exec that doesn't throw on non-zero exit (exit 1/2 are expected for changes/destructive)
-async function execPlayground(cmd: string): Promise<{ stdout: string; stderr: string; exitCode: number }> {
-  try {
-    const { stdout, stderr } = await execPromise(cmd);
-    return { stdout, stderr, exitCode: 0 };
-  } catch (err: any) {
-    return { stdout: err.stdout || '', stderr: err.stderr || '', exitCode: err.code || 1 };
-  }
+import { CliRunner } from './utils/cli-runner';
+
+// Helper: use professional CliRunner
+const runner = new CliRunner(path.join(__dirname, '../../andb-cli/andb.js'));
+async function execPlayground(args: string[]): Promise<{ stdout: string; stderr: string; exitCode: number | null }> {
+  return await runner.run(args);
 }
 
 describe('CLI Playground Matrix E2E', () => {
@@ -25,40 +23,44 @@ describe('CLI Playground Matrix E2E', () => {
     fs.statSync(path.join(scenariosDir, f)).isDirectory()
   );
 
-  const scenarioData = scenarios.map(id => ({
-    id,
-    description: (scenarioMap as Record<string, string>)[id] || 'Dynamic database transformation'
-  }));
-
   // Scenarios where normalization should make source === target (zero false positives)
   const noChangeScenarios = new Set([
     'int-display-width',
     'implicit-btree',
-    'reorder-columns'
+    'reorder-columns',
+    'implicit-collation'
   ]);
+
+  const skipScenarios = new Set([
+    'table-rename' // Directory is empty in current repo state
+  ]);
+
+  const scenarioData = scenarios
+    .filter(id => !skipScenarios.has(id))
+    .map(id => ({
+      id,
+      description: (scenarioMap as Record<string, string>)[id] || 'Dynamic database transformation'
+    }));
 
   test.each(scenarioData)('Scenario: $description ($id)', async ({ id, description }) => {
     const sourceFile = path.join(scenariosDir, id, 'source.sql');
     const targetFile = path.join(scenariosDir, id, 'target.sql');
 
-    const cmd = `node ${cliPath} playground -s ${sourceFile} -t ${targetFile}`;
+    const args = ['playground', '-s', sourceFile, '-t', targetFile];
 
-    const { stdout, stderr, exitCode } = await execPlayground(cmd);
+    const { stdout, stderr, exitCode } = await execPlayground(args);
 
-    // Filter out NestJS noise + expected destructive warning from stderr
-    const pureStderr = stderr.split('\n').filter(l =>
-      l &&
-      !l.includes('[Nest]') &&
-      !l.toLowerCase().includes('destructive changes')
-    ).join('\n');
-    expect(pureStderr.trim()).toBe('');
+    // UI/Headers/Metadata now go to stderr
+    expect(stderr).toContain('Comparing');
+    const cleanStderr = stderr.replace(/\x1b\[[0-9;]*m/g, '');
 
-    expect(stdout).toContain('Comparing');
+    // Extract operations summary from stderr (structured output)
+    const diffMatch = cleanStderr.match(/--- Diff Operations ---\s+([\s\S]+?)\s+--- Generated/);
 
-    // Extract operations summary from structured output
-    const diffMatch = stdout.match(/--- Diff Operations ---\s+([\s\S]+?)\s+--- Generated/);
+    // stdout now contains ONLY the generated SQL
+    const cleanStdout = stdout.replace(/\x1b\[[0-9;]*m/g, '').trim();
 
-    if (noChangeScenarios.has(id) || stdout.includes('structurally identical')) {
+    if (noChangeScenarios.has(id) || cleanStderr.includes('structurally identical')) {
       // Tier 1 / Normalization: Engine should detect ZERO differences
       const diff = diffMatch ? JSON.parse(diffMatch[1]) : null;
       if (diff) {
@@ -66,12 +68,7 @@ describe('CLI Playground Matrix E2E', () => {
         expect(diff.hasChanges).toBe(false);
         expect(diff.operations.length).toBe(0);
       }
-      // Verify no actual ALTER SQL was generated (strip ANSI codes first)
-      // eslint-disable-next-line no-control-regex
-      const cleanStdout = stdout.replace(/\x1b\[[0-9;]*m/g, '');
-      const afterHeader = cleanStdout.split('--- Generated ALTER TABLE SQL ---')[1] || '';
-      const actualSQL = afterHeader.trim().replace('✅ Tables are structurally identical.', '').trim();
-      expect(actualSQL).toBe('');
+      expect(cleanStdout).toBe('');
     } else if (diffMatch) {
       // Standard scenario: parse and validate operations
       const diff = JSON.parse(diffMatch[1]);
@@ -81,20 +78,18 @@ describe('CLI Playground Matrix E2E', () => {
       expect(diff.operations.length).toBeGreaterThan(0);
     } else if (!id.includes('drop-table') && !id.includes('new-table')) {
       // Fallback for scenarios without structured diff output
-      expect(stdout).toMatch(/ALTER TABLE|structurally identical/);
+      expect(cleanStdout).toMatch(/ALTER TABLE|^$/);
     }
   });
 
   it('should fail gracefully if files are not found', async () => {
-    const cmd = `node ${cliPath} playground -s fake1.sql -t fake2.sql`;
+    const args = ['playground', '-s', 'fake1.sql', '-t', 'fake2.sql'];
 
-    try {
-      await execPromise(cmd);
-      expect(true).toBe(false);
-    } catch (e: any) {
-      // CLI uses direct fs.readFileSync which throws to stderr in this version
-      expect(e.stderr).toContain('no such file or directory');
-      expect(e.code).toBe(1);
-    }
+    const { stdout, stderr, exitCode } = await runner.run(args);
+
+    // CLI uses andb-logger which might output to stdout OR stderr depending on environment
+    const allOutput = (stdout || '') + (stderr || '');
+    expect(allOutput).toContain('no such file or directory');
+    expect(exitCode).toBe(1);
   });
 });

@@ -1,12 +1,12 @@
 # 🚀 The Andb Test Report Dashboard
 
-Generated on: 2/25/2026, 10:25:56 AM
+Generated on: 3/6/2026, 1:24:23 PM
 
 ## 📊 Code Coverage Summary
 
 | Component | Statements | Branches | Functions | Lines |
 | :--- | :--- | :--- | :--- | :--- |
-| **Backend (Core & CLI)** | 45.51% (796/1749) | 27.85% (200/718) | 53.04% (148/279) | 48.64% (770/1583) |
+| **Backend (Core & CLI)** | 61.06% (1275/2088) | 46.9% (568/1211) | 72.1% (243/337) | 62.06% (1196/1927) |
 | **Frontend (Desktop UI)** | N/A | N/A | N/A | N/A |
 
 ---
