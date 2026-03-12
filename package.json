@@ -9,11 +9,11 @@
     "test:integration": "jest --config ./integration/jest.config.js",
     "test:e2e": "jest --config ./e2e/jest.config.js",
     "test:sandbox": "jest --config ./e2e/jest.config.js --testPathPattern=sandbox",
-    "test:all": "npm run test:unit && npm run test:e2e",
-    "test:coverage": "npm run test:all -- --coverage",
+    "test:all": "pnpm run test:unit && pnpm run test:e2e",
+    "test:coverage": "pnpm run test:all -- --coverage",
     "test:aio": "jest --config jest.config.js --coverage",
     "report:dashboard": "ts-node scripts/generate-dashboard.ts",
-    "docker:reset": "npm run docker:down && npm run docker:up"
+    "docker:reset": "pnpm run docker:down && pnpm run docker:up"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",
