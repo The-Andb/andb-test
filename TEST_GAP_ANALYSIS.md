@@ -1,6 +1,6 @@
-# 🔍 Test Gap Analysis — The Andb
+# 🔍 Test Gap Analysis — TheAndb
 
-This document analyzes the current testing state of The Andb project, focusing on Logic Tests (Unit) vs. Scenario Tests (E2E/Matrix).
+This document analyzes the current testing state of TheAndb project, focusing on Logic Tests (Unit) vs. Scenario Tests (E2E/Matrix).
 
 ## 🧩 1. Logic Tests (Unit)
 

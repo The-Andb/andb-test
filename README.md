@@ -1,6 +1,6 @@
 # @the-andb/test
 
-Centralized test suite for The Andb project.
+Centralized test suite for TheAndb project.
 
 ## Structure
 

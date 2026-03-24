@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body>
+  <div id="app">
+    <div v-html="htmlContent"></div>
+    <div v-html="htmlContent2"></div>
+  </div>
+  <script>
+    const { createApp, ref } = Vue
+    createApp({
+      setup() {
+        return {
+          htmlContent: ref('<span class="token operator">&lt;></span>'),
+          htmlContent2: ref('&amp;lt;&gt;')
+        }
+      }
+    }).mount('#app')
+  </script>
+</body>
+</html>

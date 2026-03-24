@@ -45,7 +45,10 @@ describe('OrchestrationService Integration', () => {
       comparator,
       exporter,
       migrator,
-      gitOrchestrator
+      {} as any, // semanticDiff
+      gitOrchestrator,
+      {} as any, // dependencySearch
+      parser
     );
 
     orchestration = new OrchestrationService(
@@ -53,7 +56,8 @@ describe('OrchestrationService Integration', () => {
       featureConfig,
       securityOrchestrator,
       gitOrchestrator,
-      schemaOrchestrator
+      schemaOrchestrator,
+      parser
     );
 
     // Create mock SQL files for DumpDriver

@@ -1,13 +1,13 @@
-# 🚀 The Andb Test Report Dashboard
+# 🚀 TheAndb Test Report Dashboard
 
 Generated on: 3/6/2026, 1:24:23 PM
 
 ## 📊 Code Coverage Summary
 
-| Component | Statements | Branches | Functions | Lines |
-| :--- | :--- | :--- | :--- | :--- |
-| **Backend (Core & CLI)** | 61.06% (1275/2088) | 46.9% (568/1211) | 72.1% (243/337) | 62.06% (1196/1927) |
-| **Frontend (Desktop UI)** | N/A | N/A | N/A | N/A |
+| Component                 | Statements         | Branches         | Functions       | Lines              |
+| :------------------------ | :----------------- | :--------------- | :-------------- | :----------------- |
+| **Backend (Core & CLI)**  | 61.06% (1275/2088) | 46.9% (568/1211) | 72.1% (243/337) | 62.06% (1196/1927) |
+| **Frontend (Desktop UI)** | N/A                | N/A              | N/A             | N/A                |
 
 ---
 
@@ -27,5 +27,6 @@ Generated on: 3/6/2026, 1:24:23 PM
 - [Desktop UI Coverage HTML](file:///Volumes/FlexibleWorkplace/The-Andb/andb-desktop/coverage/index.html)
 
 ---
+
 > [!TIP]
 > Run `npm run test:master:aio` followed by `npm run report:dashboard` to update this view.

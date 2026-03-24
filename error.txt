@@ -1,0 +1,62 @@
+[36m 16/03/2026 14:46:01 ℹ️ InitCommand-INFO >[0m Comparing e2e/fixtures/scenarios/fk-multi-column/source.sql against e2e/fixtures/scenarios/fk-multi-column/target.sql...
+[36m 16/03/2026 14:46:01 ℹ️ InitCommand-INFO >[0m --- Parsed Current Schema Table (Target) ---
+{
+  "tableName": "payments",
+  "columns": {
+    "id": "`id` int NOT NULL AUTO_INCREMENT,",
+    "order_id": "`order_id` int NOT NULL,",
+    "method_id": "`method_id` int NOT NULL,",
+    "amount": "`amount` decimal(12,2) NOT NULL,"
+  },
+  "primaryKey": [
+    "id"
+  ],
+  "indexes": {
+    "idx_order_method": "KEY `idx_order_method` (`order_id`, `method_id`)"
+  },
+  "foreignKeys": {}
+}
+[36m 16/03/2026 14:46:01 ℹ️ InitCommand-INFO >[0m --- Parsed Desired Schema Table (Source) ---
+{
+  "tableName": "payments",
+  "columns": {
+    "id": "`id` int NOT NULL AUTO_INCREMENT,",
+    "order_id": "`order_id` int NOT NULL,",
+    "method_id": "`method_id` int NOT NULL,",
+    "amount": "`amount` decimal(12,2) NOT NULL,"
+  },
+  "primaryKey": [
+    "id"
+  ],
+  "indexes": {
+    "idx_order_method": "KEY `idx_order_method` (`order_id`, `method_id`),"
+  },
+  "foreignKeys": {
+    "fk_payment_ref": "CONSTRAINT `fk_payment_ref` FOREIGN KEY (`order_id`, `method_id`) REFERENCES `order_methods` (`order_id`, `method_id`) ON DELETE CASCADE"
+  }
+}
+--- Diff Operations ---
+{
+  "tableName": "payments",
+  "operations": [
+    {
+      "type": "ADD",
+      "target": "FOREIGN_KEY",
+      "name": "fk_payment_ref",
+      "definition": "CONSTRAINT `fk_payment_ref` FOREIGN KEY (`order_id`, `method_id`) REFERENCES `order_methods` (`order_id`, `method_id`) ON DELETE CASCADE",
+      "tableName": "payments"
+    }
+  ],
+  "hasChanges": true
+}
+--- Generated ALTER TABLE SQL ---
+ALTER TABLE `payments`
+  ADD CONSTRAINT `fk_payment_ref` FOREIGN KEY (`order_id`, `method_id`) REFERENCES `order_methods` (`order_id`, `method_id`) ON DELETE CASCADE;
+
+--- 🧠 Advisor Report ---
+Safety Level: SAFE
+Impact Summary:
+  - Tables Affected: payments
+  - Additions: 0 cols, 0 idx
+  - Deletions: 0 cols, 0 idx
+  - Destructive Ops: 0

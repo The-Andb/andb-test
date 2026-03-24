@@ -1,7 +1,7 @@
 {
   "name": "@the-andb/test",
   "version": "0.0.1",
-  "description": "The Andb Test Suite - Integration & E2E Tests",
+  "description": "TheAndb Test Suite - Integration & E2E Tests",
   "private": true,
   "scripts": {
     "test": "jest",

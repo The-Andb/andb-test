@@ -1,0 +1,304 @@
+jest-haste-map: Haste module naming collision: @the-andb/mcp
+  The following files share their name; please adjust your hasteImpl:
+    * <rootDir>/andb-mcp/package.json
+    * <rootDir>/andb-desktop/dist/mac-arm64/TheAndb.app/Contents/Resources/tools/andb-mcp/package.json
+
+jest-haste-map: Haste module naming collision: @the-andb/cli
+  The following files share their name; please adjust your hasteImpl:
+    * <rootDir>/andb-cli/package.json
+    * <rootDir>/andb-desktop/dist/mac-arm64/TheAndb.app/Contents/Resources/tools/andb-cli/package.json
+
+ts-jest[config] (WARN) [94mmessage[0m[90m TS151001: [0mIf you have issues related to imports, you should consider setting `esModuleInterop` to `true` in your TypeScript configuration file (usually `tsconfig.json`). See https://blogs.msdn.microsoft.com/typescript/2018/01/31/announcing-typescript-2-7/#easier-ecmascript-module-interoperability for more information.
+ts-jest[config] (WARN) 
+    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true", see https://www.typescriptlang.org/tsconfig/#isolatedModules
+  
+  console.log
+    🐳 Integration tests starting - ensure Docker is running
+
+      at andb-test/setup/integration.setup.ts:10:11
+
+  console.log
+       [32m✔ Detected Operations:[0m ADD COLUMN last_name, ADD COLUMN age
+
+      at andb-test/e2e/cli.playground.spec.ts:74:15
+
+  console.log
+       [32m✔ Detected Operations:[0m ADD COLUMN uuid
+
+      at andb-test/e2e/cli.playground.spec.ts:74:15
+
+  console.log
+       [32m✔ Detected Operations:[0m ADD COLUMN shipping_address, ADD COLUMN discount_code, ADD COLUMN notes
+
+      at andb-test/e2e/cli.playground.spec.ts:74:15
+
+  console.log
+       [32m✔ Detected Operations:[0m ADD FOREIGN_KEY fk_dept
+
+      at andb-test/e2e/cli.playground.spec.ts:74:15
+
+  console.log
+       [32m✔ Detected Operations:[0m MODIFY COLUMN category, ADD COLUMN metadata
+
+      at andb-test/e2e/cli.playground.spec.ts:74:15
+
+  console.log
+       [32m✔ Detected Operations:[0m MODIFY COLUMN action, ADD COLUMN severity, MODIFY COLUMN table_name, MODIFY COLUMN record_id, MODIFY COLUMN old_values, MODIFY COLUMN new_values, ADD COLUMN diff_summary, ADD COLUMN session_id, DROP COLUMN user_agent, ADD INDEX idx_action_severity, ADD INDEX idx_user_session, DROP INDEX idx_action, DROP INDEX idx_user
+
+      at andb-test/e2e/cli.playground.spec.ts:74:15
+
+  console.log
+       [32m✔ Detected Operations:[0m MODIFY COLUMN is_active
+
+      at andb-test/e2e/cli.playground.spec.ts:74:15
+
+  console.log
+       [32m✔ Detected Operations:[0m DROP INDEX idx_code, ADD INDEX idx_code
+
+      at andb-test/e2e/cli.playground.spec.ts:74:15
+
+  console.log
+       [32m✔ Detected Operations:[0m MODIFY COLUMN description
+
+      at andb-test/e2e/cli.playground.spec.ts:74:15
+
+  console.log
+       [32m✔ Detected Operations:[0m MODIFY COLUMN content
+
+      at andb-test/e2e/cli.playground.spec.ts:74:15
+
+  console.log
+       [32m✔ Detected Operations:[0m ADD COLUMN channel, ADD COLUMN priority, ADD INDEX idx_channel_priority
+
+      at andb-test/e2e/cli.playground.spec.ts:74:15
+
+  console.log
+       [32m✔ Detected Operations:[0m DROP INDEX idx_full_name, ADD INDEX idx_full_name
+
+      at andb-test/e2e/cli.playground.spec.ts:74:15
+
+  console.log
+       [32m✔ Detected Operations:[0m ADD INDEX uq_email_new, ADD INDEX idx_user_new, DROP INDEX uq_email_old, DROP INDEX idx_user_old
+
+      at andb-test/e2e/cli.playground.spec.ts:74:15
+
+  console.log
+       [32m✔ Detected Operations:[0m DROP COLUMN event_name, DROP COLUMN source, DROP INDEX idx_event_name, DROP INDEX idx_source
+
+      at andb-test/e2e/cli.playground.spec.ts:74:15
+
+  console.log
+       [32m✔ Detected Operations:[0m DROP INDEX idx_type
+
+      at andb-test/e2e/cli.playground.spec.ts:74:15
+
+  console.log
+       [36m◌ Diff ops ignored by migrator (zero SQL generated)[0m
+
+      at andb-test/e2e/cli.playground.spec.ts:67:17
+
+  console.log
+       [32m✔ Detected Operations:[0m ADD COLUMN uuid, ADD COLUMN display_name, MODIFY COLUMN role, ADD COLUMN tier, ADD COLUMN is_active, ADD COLUMN last_login_ip, DROP COLUMN first_name, DROP COLUMN last_name, ADD INDEX uq_uuid, ADD INDEX idx_role_tier, ADD INDEX idx_active, DROP INDEX idx_role
+
+      at andb-test/e2e/cli.playground.spec.ts:74:15
+
+  console.log
+       [32m✔ Detected Operations:[0m DROP FOREIGN_KEY fk_order, ADD FOREIGN_KEY fk_order, DROP FOREIGN_KEY fk_product, ADD FOREIGN_KEY fk_product
+
+      at andb-test/e2e/cli.playground.spec.ts:74:15
+
+  console.log
+       [32m✔ Detected Operations:[0m DROP FOREIGN_KEY fk_invoice_customer
+
+      at andb-test/e2e/cli.playground.spec.ts:74:15
+
+  console.log
+       [32m✔ Detected Operations:[0m ADD FOREIGN_KEY fk_payment_ref
+
+      at andb-test/e2e/cli.playground.spec.ts:74:15
+
+  console.log
+       [32m✔ Detected Operations:[0m ADD COLUMN uuid, MODIFY COLUMN first_name, MODIFY COLUMN last_name, MODIFY COLUMN email, ADD COLUMN phone, ADD COLUMN department_id, MODIFY COLUMN salary, ADD COLUMN terminated_at, DROP COLUMN department, DROP COLUMN notes, ADD INDEX uq_uuid, ADD INDEX idx_dept, DROP INDEX idx_department, ADD FOREIGN_KEY fk_emp_dept_v2, DROP FOREIGN_KEY fk_emp_dept
+
+      at andb-test/e2e/cli.playground.spec.ts:74:15
+
+  console.log
+       [32m✔ Detected Operations:[0m ADD INDEX ft_search
+
+      at andb-test/e2e/cli.playground.spec.ts:74:15
+
+  console.log
+       [36m◌ Diff ops ignored by migrator (zero SQL generated)[0m
+
+      at andb-test/e2e/cli.playground.spec.ts:67:17
+
+  console.log
+       [36m◌ Diff ops ignored by migrator (zero SQL generated)[0m
+
+      at andb-test/e2e/cli.playground.spec.ts:67:17
+
+  console.log
+       [36m◌ Diff ops ignored by migrator (zero SQL generated)[0m
+
+      at andb-test/e2e/cli.playground.spec.ts:67:17
+
+  console.log
+       [32m✔ Detected Operations:[0m MODIFY COLUMN status
+
+      at andb-test/e2e/cli.playground.spec.ts:74:15
+
+  console.log
+       [36m◌ Diff ops ignored by migrator (zero SQL generated)[0m
+
+      at andb-test/e2e/cli.playground.spec.ts:67:17
+
+  console.log
+       [32m✔ Detected Operations:[0m DROP INDEX idx_title, ADD INDEX idx_title, DROP INDEX idx_url, ADD INDEX idx_url
+
+      at andb-test/e2e/cli.playground.spec.ts:74:15
+
+  console.log
+       [36m◌ Diff ops ignored by migrator (zero SQL generated)[0m
+
+      at andb-test/e2e/cli.playground.spec.ts:67:17
+
+  console.log
+       [32m✔ Detected Operations:[0m ADD COLUMN new_name, DROP COLUMN old_name
+
+      at andb-test/e2e/cli.playground.spec.ts:74:15
+
+  console.log
+       [36m◌ Diff ops ignored by migrator (zero SQL generated)[0m
+
+      at andb-test/e2e/cli.playground.spec.ts:67:17
+
+  console.log
+       [36m◌ Diff ops ignored by migrator (zero SQL generated)[0m
+
+      at andb-test/e2e/cli.playground.spec.ts:67:17
+
+  console.log
+       [32m✔ Detected Operations:[0m DROP INDEX uq_recipient_subject, ADD INDEX uq_recipient_subject
+
+      at andb-test/e2e/cli.playground.spec.ts:74:15
+
+  console.log
+       [32m✔ Detected Operations:[0m MODIFY COLUMN payload
+
+      at andb-test/e2e/cli.playground.spec.ts:74:15
+
+  console.log
+       [36m◌ Diff ops ignored by migrator (zero SQL generated)[0m
+
+      at andb-test/e2e/cli.playground.spec.ts:67:17
+
+  console.log
+    ✅ Integration tests completed
+
+      at andb-test/setup/integration.setup.ts:15:11
+
+PASS e2e/cli.playground.spec.ts (8.974 s)
+  CLI Playground Matrix E2E
+    ✓ Scenario: Adding new columns to an existing table (add-column) (242 ms)
+    ✓ Scenario: Adding a column at the very first position (add-column-first) (242 ms)
+    ✓ Scenario: Inserting columns between existing ones (AFTER logic) (add-column-middle) (245 ms)
+    ✓ Scenario: Creating foreign key relationships between tables (add-foreign-key) (248 ms)
+    ✓ Scenario: Hardened: JSON, GEOMETRY, and complex ENUM escaping (advanced-types) (246 ms)
+    ✓ Scenario: Production audit log: ENUM expansion + type upgrades + index restructuring (audit-log-table) (250 ms)
+    ✓ Scenario: Modifying column DEFAULT values (change-default) (245 ms)
+    ✓ Scenario: Switching Index types (Normal -> Unique) (change-index) (244 ms)
+    ✓ Scenario: Toggling NULL/NOT NULL constraints (change-nullability) (234 ms)
+    ✓ Scenario: Hardened: Multi-level CHARACTER SET and COLLATE management (charset-collate-change) (243 ms)
+    ✓ Scenario: Simultaneous ADD COLUMN + ADD INDEX in single ALTER (combined-column-index) (261 ms)
+    ✓ Scenario: Modifying multi-column index order (composite-index) (244 ms)
+    ✓ Scenario: Hardened: Renaming Index/FK without structural changes (constraint-rename) (238 ms)
+    ✓ Scenario: Dropping columns that have dependent indexes (ordering stress) (drop-column-with-index) (244 ms)
+    ✓ Scenario: Removing existing indexes (drop-index) (298 ms)
+    ✓ Scenario: Deleting tables from schema (drop-table) (239 ms)
+    ✓ Scenario: Production e-commerce: 14→17 cols with ENUM, timestamp, and index evolution (e-commerce-users) (252 ms)
+    ✓ Scenario: Changing FK referential actions (CASCADE → SET NULL / RESTRICT) (fk-cascade-change) (246 ms)
+    ✓ Scenario: Removing a foreign key constraint entirely (fk-drop) (243 ms)
+    ✓ Scenario: Adding a composite multi-column foreign key (fk-multi-column) (241 ms)
+    ✓ Scenario: Kitchen sink: 6+ simultaneous changes (ADD/MODIFY/DROP cols+idx+FK) (full-table-evolution) (250 ms)
+    ✓ Scenario: Adding a FULLTEXT index on text columns (fulltext-index) (245 ms)
+    ✓ Scenario: USING BTREE normalization — should produce NO changes (implicit-btree) (235 ms)
+    ✓ Scenario: Hardened No-Change: Explicit collation matching default should be ignored (implicit-collation) (237 ms)
+    ✓ Scenario: INT(11) vs INT normalization — should produce NO changes (int-display-width) (234 ms)
+    ✓ Scenario: Changing column data types (e.g. varchar -> enum) (modify-column) (245 ms)
+    ✓ Scenario: Creating entirely new tables (new-table) (237 ms)
+    ✓ Scenario: Changing index prefix lengths (col(191) → col(255)) (prefix-length-index) (244 ms)
+    ✓ Scenario: Updating Stored Procedure parameters and body (procedure-matrix) (238 ms)
+    ✓ Scenario: Detecting column renames (DROP + ADD) (rename-column) (235 ms)
+    ✓ Scenario: Column reordering — should produce NO changes (name-based compare) (reorder-columns) (236 ms)
+    ✓ Scenario: Modifying Trigger logic and timing (trigger-complex-matrix) (234 ms)
+    ✓ Scenario: Downgrading UNIQUE KEY to normal KEY (DROP+ADD) (unique-to-normal) (238 ms)
+    ✓ Scenario: MySQL version comments normalization — should produce NO changes (version-comments) (238 ms)
+    ✓ Scenario: Updating View query definitions (view-matrix) (243 ms)
+    ✓ should fail gracefully if files are not found (227 ms)
+
+-----------------------------------|---------|----------|---------|---------|-------------------
+File                               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-----------------------------------|---------|----------|---------|---------|-------------------
+All files                          |       0 |        0 |       0 |       0 |                   
+ comparator                        |       0 |        0 |       0 |       0 |                   
+  comparator.service.ts            |       0 |        0 |       0 |       0 | 1-896             
+  semantic-diff.service.ts         |       0 |        0 |       0 |       0 | 1-135             
+ config                            |       0 |        0 |       0 |       0 |                   
+  feature.config.ts                |       0 |      100 |     100 |       0 | 1-28              
+  project-config.service.ts        |       0 |        0 |       0 |       0 | 1-185             
+  yaml-importer.service.ts         |       0 |        0 |       0 |       0 | 1-112             
+ driver                            |       0 |        0 |       0 |       0 |                   
+  driver-factory.service.ts        |       0 |        0 |       0 |       0 | 1-35              
+  index.ts                         |       0 |      100 |     100 |       0 | 1-4               
+  ssh-tunnel.ts                    |       0 |        0 |       0 |       0 | 1-63              
+ driver/dump                       |       0 |        0 |       0 |       0 |                   
+  dump.driver.ts                   |       0 |        0 |       0 |       0 | 8-208             
+  dump.introspection.ts            |       0 |        0 |       0 |       0 | 4-71              
+  index.ts                         |       0 |      100 |     100 |       0 | 1-2               
+ driver/file                       |       0 |        0 |       0 |       0 |                   
+  file.driver.ts                   |       0 |        0 |       0 |       0 | 8-117             
+  file.introspection.ts            |       0 |        0 |       0 |       0 | 15-73             
+ driver/mysql                      |       0 |        0 |       0 |       0 |                   
+  index.ts                         |       0 |      100 |     100 |       0 | 1-3               
+  mysql.driver.ts                  |       0 |        0 |       0 |       0 | 9-200             
+  mysql.introspection.ts           |       0 |        0 |       0 |       0 | 8-305             
+  mysql.monitoring.ts              |       0 |      100 |       0 |       0 | 4-40              
+ driver/postgres                   |       0 |        0 |       0 |       0 |                   
+  postgres.driver.ts               |       0 |        0 |       0 |       0 | 2-69              
+ driver/sqlite                     |       0 |        0 |       0 |       0 |                   
+  sqlite.driver.ts                 |       0 |        0 |       0 |       0 | 8-116             
+  sqlite.introspection.ts          |       0 |        0 |       0 |       0 | 6-113             
+  sqlite.monitoring.ts             |       0 |        0 |       0 |       0 | 3-32              
+ exporter                          |       0 |        0 |       0 |       0 |                   
+  exporter.service.ts              |       0 |        0 |       0 |       0 | 1-247             
+  schema-mirror.service.ts         |       0 |        0 |       0 |       0 | 1-48              
+ git                               |       0 |        0 |       0 |       0 |                   
+  git.service.ts                   |       0 |        0 |       0 |       0 | 1-160             
+ migrator                          |       0 |        0 |       0 |       0 |                   
+  migrator.service.ts              |       0 |        0 |       0 |       0 | 1-147             
+ migrator/mysql                    |       0 |        0 |       0 |       0 |                   
+  mysql.migrator.ts                |       0 |        0 |       0 |       0 | 3-145             
+ migrator/sqlite                   |       0 |        0 |       0 |       0 |                   
+  sqlite.migrator.ts               |       0 |        0 |       0 |       0 | 4-76              
+ orchestration                     |       0 |        0 |       0 |       0 |                   
+  git-orchestrator.service.ts      |       0 |        0 |       0 |       0 | 1-131             
+  orchestration.service.ts         |       0 |        0 |       0 |       0 | 1-113             
+  schema-orchestrator.service.ts   |       0 |        0 |       0 |       0 | 1-423             
+  security-orchestrator.service.ts |       0 |        0 |       0 |       0 | 1-160             
+ parser                            |       0 |        0 |       0 |       0 |                   
+  parser.service.ts                |       0 |        0 |       0 |       0 | 2-653             
+ reporter                          |       0 |        0 |       0 |       0 |                   
+  reporter.service.ts              |       0 |        0 |       0 |       0 | 1-129             
+ safety                            |       0 |        0 |       0 |       0 |                   
+  impact-analysis.service.ts       |       0 |        0 |       0 |       0 | 1-195             
+ search                            |       0 |        0 |       0 |       0 |                   
+  dependency-search.service.ts     |       0 |        0 |       0 |       0 | 4-178             
+ storage                           |       0 |        0 |       0 |       0 |                   
+  schema_template.ts               |       0 |      100 |     100 |       0 | 1                 
+  storage.service.ts               |       0 |        0 |       0 |       0 | 1-274             
+-----------------------------------|---------|----------|---------|---------|-------------------
+Test Suites: 1 passed, 1 total
+Tests:       36 passed, 36 total
+Snapshots:   0 total
+Time:        11.655 s
+Ran all test suites matching /e2e\/cli.playground.spec.ts/i.

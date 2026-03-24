@@ -25,7 +25,7 @@ function formatPercent(val: any) {
 const backend = getCoverage(backendCoveragePath);
 const frontend = getCoverage(frontendCoveragePath);
 
-const content = `# 🚀 The Andb Test Report Dashboard
+const content = `# 🚀 TheAndb Test Report Dashboard
 
 Generated on: ${new Date().toLocaleString()}
 
