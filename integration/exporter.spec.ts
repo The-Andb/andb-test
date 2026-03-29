@@ -1,6 +1,7 @@
 import { ExporterService } from '../../andb-core/src/modules/exporter/exporter.service';
 import { ProjectConfigService } from '../../andb-core/src/modules/config/project-config.service';
 import { StorageService } from '../../andb-core/src/modules/storage/storage.service';
+import { CliStorageStrategy } from '../../andb-cli/src/storage/strategy/cli-storage.strategy';
 import { DriverFactoryService } from '../../andb-core/src/modules/driver/driver-factory.service';
 import { ParserService } from '../../andb-core/src/modules/parser/parser.service';
 import { ConnectionType } from '../../andb-core/src/common/interfaces/connection.interface';
@@ -21,7 +22,7 @@ describe('ExporterService', () => {
     const config = new ProjectConfigService();
     const driverFactory = new DriverFactoryService(parser);
     storage = new StorageService();
-    storage.initialize(testDbPath);
+    await storage.initialize(new CliStorageStrategy(), testDbPath);
 
     config.setConnection('DUMMY', { type: ConnectionType.DUMP, host: dummySql, database: 'dummy.sql' }, ConnectionType.DUMP);
 
@@ -36,7 +37,7 @@ describe('ExporterService', () => {
 
   it('should export schema to storage', async () => {
     const result = await exporter.exportSchema('DUMMY') as any;
-    expect(result.TABLES).toBe(1);
+    expect(result.tables).toBe(1);
 
     // Verify storage has it
     const ddl = await storage.getDDL('DUMMY', 'dummy.sql', 'TABLES', 'users');

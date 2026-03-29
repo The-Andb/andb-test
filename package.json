@@ -1,6 +1,6 @@
 {
   "name": "@the-andb/test",
-  "version": "3.3.2",
+  "version": "3.3.3",
   "description": "TheAndb Test Suite - Integration & E2E Tests",
   "private": true,
   "scripts": {
@@ -16,10 +16,12 @@
     "docker:reset": "pnpm run docker:down && pnpm run docker:up"
   },
   "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
     "@types/jest": "^29.5.12",
     "jest": "^29.7.0",
     "jest-mock-extended": "^4.0.0",
     "mysql2": "^3.9.0",
+    "reflect-metadata": "^0.2.2",
     "ts-jest": "^29.1.2",
     "typescript": "^5.3.3"
   }

@@ -1,4 +1,6 @@
+import 'reflect-metadata';
 import { StorageService } from '../../andb-core/src/modules/storage/storage.service';
+import { CliStorageStrategy } from '../../andb-cli/src/storage/strategy/cli-storage.strategy';
 import * as path from 'path';
 import * as fs from 'fs';
 
@@ -6,10 +8,11 @@ describe('StorageService', () => {
   let storage: StorageService;
   const testDbPath = path.join(__dirname, 'test-storage.db');
 
-  beforeAll(() => {
+  beforeAll(async () => {
     if (fs.existsSync(testDbPath)) fs.unlinkSync(testDbPath);
     storage = new StorageService();
-    storage.initialize(testDbPath);
+    const strategy = new CliStorageStrategy();
+    await storage.initialize(strategy, testDbPath);
   });
 
   afterAll(() => {
@@ -56,7 +59,7 @@ describe('StorageService', () => {
   });
 
   it('should handle snapshots', async () => {
-    await storage.saveSnapshot('PROD', 'mydb', 'TABLE', 'users', 'CREATE TABLE users (id INT)', 'v1');
+    await storage.saveSnapshot('PROD', 'mydb', 'TABLE', 'users', 'CREATE TABLE users (id INT)', 'hash_v1');
     const snaps = await storage.getSnapshots('PROD', 'mydb', 'TABLE', 'users') as any[];
     expect(snaps.length).toBe(1);
     expect(snaps[0].version_tag).toBe('v1');
@@ -66,24 +69,16 @@ describe('StorageService', () => {
   });
 
   it('should save migration history', async () => {
-    await storage.saveMigration({
-      srcEnv: 'DEV',
-      destEnv: 'PROD',
-      database: 'mydb',
-      type: 'TABLE',
-      name: 'users',
-      operation: 'ALTER',
-      status: 'SUCCESS'
-    });
+    await storage.addMigrationHistory('DEV', 'mydb', 'SYNC', { table: 'users' });
 
     const history = await storage.getMigrationHistory(5) as any[];
     expect(history.length).toBeGreaterThan(0);
-    expect(history[0].status).toBe('SUCCESS');
+    expect(history[0].status).toBe('PENDING');
   });
 
   it('should provide stats', async () => {
     const stats = await storage.getStats();
-    expect(stats.ddlExports).toBeGreaterThan(0);
+    expect(stats.exports).toBeGreaterThan(0);
     expect(stats.snapshots).toBeGreaterThan(0);
   });
 
@@ -92,8 +87,8 @@ describe('StorageService', () => {
     const envs = await storage.getEnvironments();
     expect(envs).not.toContain('DEV');
 
-    await storage.clearAll();
+    await storage.execute('DELETE FROM ddl_exports');
     const stats = await storage.getStats();
-    expect(stats.ddlExports).toBe(0);
+    expect(stats.exports).toBe(0);
   });
 });

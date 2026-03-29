@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+
 /**
  * Integration Test Setup
  * 

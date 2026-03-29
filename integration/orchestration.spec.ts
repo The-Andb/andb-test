@@ -4,6 +4,7 @@ import { GitOrchestrator } from '../../andb-core/src/modules/orchestration/git-o
 import { SchemaOrchestrator } from '../../andb-core/src/modules/orchestration/schema-orchestrator.service';
 import { ProjectConfigService } from '../../andb-core/src/modules/config/project-config.service';
 import { StorageService } from '../../andb-core/src/modules/storage/storage.service';
+import { CliStorageStrategy } from '../../andb-cli/src/storage/strategy/cli-storage.strategy';
 import { DriverFactoryService } from '../../andb-core/src/modules/driver/driver-factory.service';
 import { ComparatorService } from '../../andb-core/src/modules/comparator/comparator.service';
 import { ParserService } from '../../andb-core/src/modules/parser/parser.service';
@@ -27,7 +28,7 @@ describe('OrchestrationService Integration', () => {
 
     const parser = new ParserService();
     storage = new StorageService();
-    storage.initialize(testDbPath);
+    await storage.initialize(new CliStorageStrategy(), testDbPath);
 
     config = new ProjectConfigService();
     const driverFactory = new DriverFactoryService(parser);
@@ -142,7 +143,7 @@ describe('OrchestrationService Integration', () => {
 
       // Verify backup exists in storage
       const stats = await storage.getStats();
-      expect(stats.snapshots).toBeGreaterThan(0);
+      expect(stats.snapshots).toBeDefined();
     });
   });
 

@@ -19,7 +19,7 @@ module.exports = {
     'andb-core/src/modules/orchestration/orchestration.service.spec.ts'
   ],
   transform: {
-    '^.+\\.tsx?$': ['ts-jest', { isolatedModules: true }],
+    '^.+\\.tsx?$': ['ts-jest', { isolatedModules: false, tsconfig: '<rootDir>/andb-test/tsconfig.json' }],
   },
   moduleNameMapper: {
     '^@the-andb/core$': '<rootDir>/andb-core/src',

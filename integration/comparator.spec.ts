@@ -7,7 +7,7 @@ describe('ComparatorService Integration', () => {
 
   beforeAll(() => {
     parser = new ParserService();
-    comparator = new ComparatorService(parser);
+    comparator = new ComparatorService(parser, {} as any, {} as any);
   });
 
   it('should ignore USING BTREE when generating INDEX differences', () => {
