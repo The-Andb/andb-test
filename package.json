@@ -1,6 +1,6 @@
 {
   "name": "@the-andb/test",
-  "version": "3.3.3",
+  "version": "3.3.4",
   "description": "TheAndb Test Suite - Integration & E2E Tests",
   "private": true,
   "scripts": {
