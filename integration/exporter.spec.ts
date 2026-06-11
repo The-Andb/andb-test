@@ -37,7 +37,7 @@ describe('ExporterService', () => {
 
   it('should export schema to storage', async () => {
     const result = await exporter.exportSchema('DUMMY') as any;
-    expect(result.tables).toBe(1);
+    expect(result.TABLES).toBe(1);
 
     // Verify storage has it
     const ddl = await storage.getDDL('DUMMY', 'dummy.sql', 'TABLES', 'users');

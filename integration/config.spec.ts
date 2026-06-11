@@ -28,10 +28,10 @@ describe('ProjectConfigService', () => {
   it('should manage domain normalization', () => {
     const pattern = /old-domain\.com/g;
     const replacement = 'new-domain.com';
-    config.setDomainNormalization(pattern, replacement);
+    config.setDomainNormalization({ pattern, replacement });
 
     const norm = config.getDomainNormalization();
-    expect(norm.pattern).toEqual(pattern);
-    expect(norm.replacement).toBe(replacement);
+    expect(norm[0].pattern).toEqual(pattern);
+    expect(norm[0].replacement).toBe(replacement);
   });
 });

@@ -33,7 +33,7 @@ describe('OrchestrationService Integration', () => {
     config = new ProjectConfigService();
     const driverFactory = new DriverFactoryService(parser);
     const comparator = new ComparatorService(parser, storage, config);
-    const migrator = new MigratorService();
+    const migrator = new MigratorService(config);
     const exporter = new ExporterService(driverFactory, config, parser, storage);
 
     const mirrorService = {} as any;

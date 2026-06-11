@@ -35,7 +35,7 @@ describe('StorageService', () => {
     expect(envs).toContain('DEV');
 
     const dbs = await storage.getDatabases('DEV');
-    expect(dbs).toContain('mydb');
+    expect(dbs.map((d: any) => d.name)).toContain('mydb');
   });
 
   it('should save and retrieve comparisons', async () => {
@@ -51,8 +51,8 @@ describe('StorageService', () => {
 
     const comps = await storage.getComparisons('DEV', 'PROD', 'mydb', 'TABLE') as any[];
     expect(comps.length).toBe(1);
-    expect(comps[0].name).toBe('users');
-    expect(comps[0].alterStatements).toContain('ALTER TABLE users ADD COLUMN age INT');
+    expect(comps[0].ddl_name).toBe('users');
+    expect(comps[0].alter_statements).toContain('ALTER TABLE users ADD COLUMN age INT');
 
     const latest = await storage.getLatestComparisons(5);
     expect(latest.length).toBeGreaterThan(0);
@@ -62,7 +62,7 @@ describe('StorageService', () => {
     await storage.saveSnapshot('PROD', 'mydb', 'TABLE', 'users', 'CREATE TABLE users (id INT)', 'hash_v1');
     const snaps = await storage.getSnapshots('PROD', 'mydb', 'TABLE', 'users') as any[];
     expect(snaps.length).toBe(1);
-    expect(snaps[0].version_tag).toBe('v1');
+    expect(snaps[0].hash).toBe('hash_v1');
 
     const allSnaps = await storage.getAllSnapshots(10);
     expect(allSnaps.length).toBeGreaterThan(0);

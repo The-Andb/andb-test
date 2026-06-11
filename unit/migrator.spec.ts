@@ -7,7 +7,10 @@ describe('MigratorService Unit', () => {
   let mysqlMigrator: MysqlMigrator;
 
   beforeEach(() => {
-    migrator = new MigratorService();
+    const mockConfigService = {
+      getIsNotMigrateCondition: jest.fn().mockReturnValue(null),
+    } as any;
+    migrator = new MigratorService(mockConfigService);
     mysqlMigrator = new MysqlMigrator();
   });
 
